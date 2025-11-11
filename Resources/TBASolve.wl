@@ -12,7 +12,7 @@
 (*Package Header*)
 
 
-BeginPackage["TBA`"];
+BeginPackage["TBASolve`"];
 
 
 ThermodynamicBetheAnsatzSolve::usage=
@@ -411,10 +411,6 @@ ThermodynamicBetheAnsatzSolve[tba_Equal|tba:{_Equal..},y_Symbol|y:{_Symbol..},op
 		numFailure,Fourier::fftl],
 		overflowFailure,General::ovfl]//Catch
 		
-
-
-(* ::Section:: *)
-(*TBA examples*)
 
 
 (* ::Section:: *)
