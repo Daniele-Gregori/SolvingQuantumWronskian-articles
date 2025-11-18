@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       154,          7]
-NotebookDataLength[    328298,       8544]
-NotebookOptionsPosition[    302098,       8096]
-NotebookOutlinePosition[    302582,       8115]
-CellTagsIndexPosition[    302539,       8112]
+NotebookDataLength[    342349,       8863]
+NotebookOptionsPosition[    315459,       8403]
+NotebookOutlinePosition[    315943,       8422]
+CellTagsIndexPosition[    315900,       8419]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -8091,7 +8091,314 @@ Cell[BoxData[
 }, Open  ]]
 }, Closed]]
 }, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["App BHs", "Section",
+ CellChangeTimes->{{3.972298516701932*^9, 3.972298522421529*^9}, 
+   3.972298559949011*^9},ExpressionUUID->"37993c87-4369-49be-b5cb-\
+8b770ea684a7"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"fInt", "[", 
+   RowBox[{
+   "\[CapitalSigma]1_", ",", "\[CapitalSigma]2_", ",", "\[CapitalSigma]3_"}], 
+   "]"}], ":=", "\[IndentingNewLine]", 
+  RowBox[{"Block", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{"branches", ",", "int"}], "}"}], ",", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"branches", "=", 
+      RowBox[{"SolveValues", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"1", "+", 
+           FractionBox["1", 
+            SuperscriptBox["z", "4"]], "+", 
+           FractionBox["\[CapitalSigma]1", "z"], "+", 
+           FractionBox["\[CapitalSigma]2", 
+            SuperscriptBox["z", "2"]], "+", 
+           FractionBox["\[CapitalSigma]3", 
+            SuperscriptBox["z", "3"]]}], ")"}], "==", "0"}], ",", "z"}], 
+       "]"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"int", "=", 
+      RowBox[{"\[Pi]", "/", 
+       RowBox[{"Chop", "@", 
+        RowBox[{"NIntegrate", "[", 
+         RowBox[{
+          RowBox[{"Sqrt", "@", 
+           RowBox[{"(", 
+            RowBox[{"1", "+", 
+             FractionBox["1", 
+              SuperscriptBox["z", "4"]], "+", 
+             FractionBox["\[CapitalSigma]1", "z"], "+", 
+             FractionBox["\[CapitalSigma]2", 
+              SuperscriptBox["z", "2"]], "+", 
+             FractionBox["\[CapitalSigma]3", 
+              SuperscriptBox["z", "3"]]}], ")"}]}], ",", 
+          RowBox[{"{", 
+           RowBox[{"z", ",", 
+            RowBox[{"branches", "[", 
+             RowBox[{"[", "3", "]"}], "]"}], ",", 
+            RowBox[{"branches", "[", 
+             RowBox[{"[", "4", "]"}], "]"}]}], "}"}]}], "]"}]}]}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"ToString", "[", 
+      RowBox[{
+       RowBox[{"\[Omega]", "[", "n", "]"}], " ", "\[EqualTilde]", 
+       RowBox[{"int", " ", 
+        RowBox[{"(", 
+         RowBox[{"n", "+", ".5"}], ")"}]}]}], "]"}]}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.972296253806746*^9, 3.972296292381454*^9}, {
+   3.9722963375226297`*^9, 3.972296433073543*^9}, {3.972296463292061*^9, 
+   3.972296487594301*^9}, {3.9722965229891653`*^9, 3.972296580684825*^9}, {
+   3.972297428365551*^9, 3.9722974288536863`*^9}, {3.9722974895278463`*^9, 
+   3.972297516621467*^9}, {3.9722975599262037`*^9, 3.972297581530201*^9}, 
+   3.972297807473667*^9, {3.972297880106042*^9, 3.9722978968274593`*^9}},
+ CellLabel->"In[82]:=",ExpressionUUID->"af81c092-af0f-42cb-92ef-fbd09a715712"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"form", "=", 
+  RowBox[{"FormPage", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"\"\<\[CapitalSigma]1\>\"", ",", "\"\<\[CapitalSigma]1\>\""}],
+         "}"}], "->", 
+       RowBox[{"Restricted", "[", 
+        RowBox[{"\"\<Real\>\"", ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"-", "1"}], ",", "1"}], "}"}]}], "]"}]}], ",", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"\"\<\[CapitalSigma]2\>\"", ",", "\"\<\[CapitalSigma]2\>\""}],
+         "}"}], "->", 
+       RowBox[{"Restricted", "[", 
+        RowBox[{"\"\<Real\>\"", ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"-", "1"}], ",", "1"}], "}"}]}], "]"}]}], ",", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"\"\<\[CapitalSigma]3\>\"", ",", "\"\<\[CapitalSigma]3\>\""}],
+         "}"}], "->", 
+       RowBox[{"Restricted", "[", 
+        RowBox[{"\"\<Real\>\"", ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"-", "1"}], ",", "1"}], "}"}]}], "]"}]}]}], "}"}], ",", 
+    RowBox[{
+     RowBox[{"fInt", "[", 
+      RowBox[{
+      "#\[CapitalSigma]1", ",", "#\[CapitalSigma]2", ",", 
+       "#\[CapitalSigma]3"}], "]"}], "&"}], ",", 
+    RowBox[{"AppearanceRules", "\[Rule]", 
+     RowBox[{"<|", 
+      RowBox[{
+       RowBox[{"\"\<Title\>\"", " ", "\[Rule]", 
+        " ", "\"\<Highly damped overtones of GRN black holes\>\""}], ",", " ", 
+       RowBox[{"\"\<Description\>\"", " ", "\[Rule]", 
+        " ", "\"\<Enter the k-charges product combinations \[CapitalSigma]k \
+for the Generalized Extremal Reissner\[Dash]Nordstr\[ODoubleDot]m Black Hole \
+and compute the leading asymptotic behaviour of its quasinormal modes for \
+large overtone index n.\>\""}]}], "|>"}]}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.97229617725149*^9, 3.972296241971442*^9}, {
+  3.9722962973642693`*^9, 3.97229632446381*^9}, {3.9722966576591787`*^9, 
+  3.972296749762672*^9}, {3.972296835511517*^9, 3.972297081019628*^9}, {
+  3.972297130946014*^9, 3.97229727477887*^9}, {3.9722973695547123`*^9, 
+  3.9722973920595093`*^9}},
+ CellLabel->"In[83]:=",ExpressionUUID->"7ecc62cb-ccf8-4552-9fc0-88fc2b3fc2d9"],
+
+Cell[BoxData[
+ InterpretationBox[
+  DynamicModuleBox[{Forms`FormPage`PackagePrivate`temp$$ = <|
+   "\[CapitalSigma]1" -> <|
+     "Interpreter" -> Restricted["Real", {-1, 1}], "Label" -> 
+      "\[CapitalSigma]1", "Input" -> ""|>, 
+    "\[CapitalSigma]2" -> <|
+     "Interpreter" -> Restricted["Real", {-1, 1}], "Label" -> 
+      "\[CapitalSigma]2", "Input" -> ""|>, 
+    "\[CapitalSigma]3" -> <|
+     "Interpreter" -> Restricted["Real", {-1, 1}], "Label" -> 
+      "\[CapitalSigma]3", "Input" -> ""|>|>, 
+   Forms`FormPage`PackagePrivate`vals$$ = <||>, 
+   Forms`FormPage`PackagePrivate`valid$$ = False, 
+   Forms`FormPage`PackagePrivate`form2$$ = 
+   FormObject[<|
+    "\[CapitalSigma]1" -> <|
+      "Interpreter" -> Restricted["Real", {-1, 1}], "Label" -> 
+       "\[CapitalSigma]1"|>, 
+     "\[CapitalSigma]2" -> <|
+      "Interpreter" -> Restricted["Real", {-1, 1}], "Label" -> 
+       "\[CapitalSigma]2"|>, 
+     "\[CapitalSigma]3" -> <|
+      "Interpreter" -> Restricted["Real", {-1, 1}], "Label" -> 
+       "\[CapitalSigma]3"|>|>, <||>, 
+    AppearanceRules -> <|
+     "Title" -> "Highly damped overtones of GRN black holes", "Description" -> 
+      "Enter the k-charges product combinations \[CapitalSigma]k for the \
+Generalized Extremal Reissner\[Dash]Nordstr\[ODoubleDot]m Black Hole and \
+compute the leading asymptotic behaviour of its quasinormal modes for large \
+overtone index n."|>], Forms`FormPage`PackagePrivate`valid2$$}, 
+   DynamicBox[ToBoxes[
+     With[{
+      Forms`FormPage`PackagePrivate`formpane$ = Forms`PackageScope`formPanel[
+         Forms`FormPage`PackagePrivate`form2$$[
+         AppearanceRules, "FormPanelStyle"]][
+         Forms`getFormLayout[
+          Forms`PackageScope`bindableForm[
+          Forms`FormPage`PackagePrivate`temp$$, 
+           Evaluate[Forms`FormPage`PackagePrivate`form2$$], None, None -> 
+           Forms`PackageScope`completeAction[
+            Forms`FormPage`PackagePrivate`form2$$, 
+             Forms`FormPage`PackagePrivate`temp$$, 
+             Forms`FormPage`PackagePrivate`vals$$, (
+             Unset[Forms`FormPage`PackagePrivate`vals$$]; 
+             Forms`FormPage`PackagePrivate`vals$$ = #; 
+             Forms`FormPage`PackagePrivate`valid2$$ = Not[
+                TrueQ[Forms`PackageScope`$DontComplete]])& , None, {
+             AppearanceRules -> <|
+               "Title" -> "Highly damped overtones of GRN black holes", 
+                "Description" -> 
+                "Enter the k-charges product combinations \[CapitalSigma]k \
+for the Generalized Extremal Reissner\[Dash]Nordstr\[ODoubleDot]m Black Hole \
+and compute the leading asymptotic behaviour of its quasinormal modes for \
+large overtone index n."|>}]]]], Forms`FormPage`PackagePrivate`resultpane$ = 
+       Column[{
+          Forms`PackageScope`formPanel[
+           Forms`FormPage`PackagePrivate`form2$$[
+           AppearanceRules, "FormPanelStyle"]][
+           If[
+           Forms`FormPage`PackagePrivate`valid$$ = 
+            And[Forms`FormPage`PackagePrivate`vals$$ =!= <||>, 
+              FreeQ[
+               Values[Forms`FormPage`PackagePrivate`vals$$], 
+               Alternatives[
+                Blank[Failure], Forms`PackageScope`fieldHidden]], 
+              TrueQ[Forms`FormPage`PackagePrivate`valid2$$]], 
+            Unset[Forms`FormPage`PackagePrivate`valid2$$]; Style[
+              ($CellContext`fInt[
+               Slot["\[CapitalSigma]1"], 
+               Slot["\[CapitalSigma]2"], 
+               Slot["\[CapitalSigma]3"]]& )[
+              Forms`FormPage`PackagePrivate`vals$$], "Output", 
+              ToString[StandardForm]], 
+            Style["Invalid form", "Message"]]]}]}, 
+      Forms`PackageScope`formPanel[
+       Forms`FormPage`PackagePrivate`form2$$[
+       AppearanceRules, "FormPanelStyle"]][
+       Column[
+        Forms`doLayout[
+        Automatic, Forms`FormPage`PackagePrivate`valid$$, {
+         Forms`FormPage`PackagePrivate`formpane$, 
+          Forms`FormPage`PackagePrivate`resultpane$, 
+          Forms`PackageScope`formPanel[
+           Forms`FormPage`PackagePrivate`form2$$[
+           AppearanceRules, "FormPanelStyle"]][
+           Item[
+            Row[{
+              Spacer[0], 
+              Forms`PackageScope`formDefaultButton[
+               Forms`FormPage`PackagePrivate`form2$$[AppearanceRules, 
+                Forms`FormPage`PackagePrivate`form2$$[
+                AppearanceRules, "CurrentSubmitLabel"]], 
+               Forms`PackageScope`completeAction[
+               Forms`FormPage`PackagePrivate`form2$$, 
+                Forms`FormPage`PackagePrivate`temp$$, 
+                Forms`FormPage`PackagePrivate`vals$$, (
+                Unset[Forms`FormPage`PackagePrivate`vals$$]; 
+                Forms`FormPage`PackagePrivate`vals$$ = #; 
+                Forms`FormPage`PackagePrivate`valid2$$ = Not[
+                   TrueQ[Forms`PackageScope`$DontComplete]])& , None, {
+                AppearanceRules -> <|
+                  "Title" -> "Highly damped overtones of GRN black holes", 
+                   "Description" -> 
+                   "Enter the k-charges product combinations \[CapitalSigma]k \
+for the Generalized Extremal Reissner\[Dash]Nordstr\[ODoubleDot]m Black Hole \
+and compute the leading asymptotic behaviour of its quasinormal modes for \
+large overtone index n."|>}], 
+               Forms`FormPage`PackagePrivate`form2$$[
+               AppearanceRules, "FormDefaultButtonStyle"]]}], Alignment -> 
+            Right]]}, 
+         Forms`PackageScope`formPanel[
+          Forms`FormPage`PackagePrivate`form2$$[
+          AppearanceRules, "FormPanelStyle"]][
+          BlankNullSequence[]], Forms`PackageScope`formPanel[
+          Forms`FormPage`PackagePrivate`form2$$[
+          AppearanceRules, "FormPanelStyle"]][
+          Column[
+           Part[{
+             SlotSequence[1]}, All, 1]]]& ]]]], StandardForm],
+    ImageSizeCache->{967., {253.6709041595459, 260.8358211517334}},
+    TrackedSymbols:>{Forms`FormPage`PackagePrivate`vals$$}],
+   DynamicModuleValues:>{}],
+  FormPage[
+   FormObject[<|
+    "\[CapitalSigma]1" -> <|
+      "Interpreter" -> Restricted["Real", {-1, 1}], "Label" -> 
+       "\[CapitalSigma]1"|>, 
+     "\[CapitalSigma]2" -> <|
+      "Interpreter" -> Restricted["Real", {-1, 1}], "Label" -> 
+       "\[CapitalSigma]2"|>, 
+     "\[CapitalSigma]3" -> <|
+      "Interpreter" -> Restricted["Real", {-1, 1}], "Label" -> 
+       "\[CapitalSigma]3"|>|>, <||>, 
+    AppearanceRules -> <|
+     "Title" -> "Highly damped overtones of GRN black holes", "Description" -> 
+      "Enter the k-charges product combinations \[CapitalSigma]k for the \
+Generalized Extremal Reissner\[Dash]Nordstr\[ODoubleDot]m Black Hole and \
+compute the leading asymptotic behaviour of its quasinormal modes for large \
+overtone index n."|>], $CellContext`fInt[
+    Slot["\[CapitalSigma]1"], 
+    Slot["\[CapitalSigma]2"], 
+    Slot["\[CapitalSigma]3"]]& ],
+  Editable->False,
+  SelectWithContents->True,
+  Selectable->False]], "Output",
+ CellChangeTimes->{
+  3.9722970924920053`*^9, 3.972297138967173*^9, {3.972297184370916*^9, 
+   3.972297275395155*^9}, {3.9722973760559607`*^9, 3.9722973924422703`*^9}, 
+   3.972297433060234*^9, 3.972297519943651*^9, 3.972297585799856*^9, 
+   3.9722978110235863`*^9, 3.9722979004979897`*^9},
+ CellLabel->"Out[83]=",ExpressionUUID->"e8bcbcd2-17ea-4542-8cd9-4e4684e8a7cb"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"CloudDeploy", "[", 
+  RowBox[{"form", ",", 
+   RowBox[{"CloudObject", "[", "\"\<Articles/AppGRNOvertones\>\"", "]"}], ",", 
+   RowBox[{"Permissions", "->", "\"\<Public\>\""}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.972297276946*^9, 3.9722973387120867`*^9}},
+ CellLabel->"In[84]:=",ExpressionUUID->"d4ee4ef6-48a1-49a5-8fb4-035e1b1085df"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"CloudObject", "[", 
+   TemplateBox[{
+    "\"https://www.wolframcloud.com/obj/dangregori/Articles/AppGRNOvertones\"\
+", "https://www.wolframcloud.com/obj/dangregori/Articles/AppGRNOvertones"},
+    "HyperlinkURL"], "]"}],
+  CloudObject[
+  "https://www.wolframcloud.com/obj/dangregori/Articles/AppGRNOvertones"],
+  SelectWithContents->True]], "Output",
+ CellChangeTimes->{
+  3.9722973419862747`*^9, {3.972297379275882*^9, 3.972297395955645*^9}, {
+   3.9722974352603893`*^9, 3.972297455007182*^9}, 3.9722975231219997`*^9, 
+   3.972297588568296*^9, 3.972297814683639*^9, 3.972297903099243*^9},
+ CellLabel->"Out[84]=",ExpressionUUID->"78930d2d-a57f-48d7-a947-45a31a48dd41"]
 }, Open  ]]
+}, Closed]]
 }, Open  ]]
 },
 WindowSize->{1113, 866},
@@ -8544,7 +8851,19 @@ Cell[300956, 8055, 1078, 34, 76, "Output",ExpressionUUID->"14a578f9-63e6-4b38-8f
 }, Open  ]]
 }, Closed]]
 }, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[302107, 8097, 175, 3, 82, "Section",ExpressionUUID->"37993c87-4369-49be-b5cb-8b770ea684a7"],
+Cell[302285, 8102, 2456, 59, 200, "Input",ExpressionUUID->"af81c092-af0f-42cb-92ef-fbd09a715712"],
+Cell[CellGroupData[{
+Cell[304766, 8165, 2193, 53, 189, "Input",ExpressionUUID->"7ecc62cb-ccf8-4552-9fc0-88fc2b3fc2d9"],
+Cell[306962, 8220, 7343, 151, 535, "Output",ExpressionUUID->"e8bcbcd2-17ea-4542-8cd9-4e4684e8a7cb"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[314342, 8376, 362, 6, 36, "Input",ExpressionUUID->"d4ee4ef6-48a1-49a5-8fb4-035e1b1085df"],
+Cell[314707, 8384, 712, 14, 43, "Output",ExpressionUUID->"78930d2d-a57f-48d7-a947-45a31a48dd41"]
 }, Open  ]]
+}, Closed]]
 }, Open  ]]
 }
 ]
