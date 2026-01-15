@@ -122,7 +122,7 @@ Cell[BoxData[
   3.950865522638874*^9, 3.9508655243150187`*^9}},
  CellLabel->
   "In[171]:=",ExpressionUUID->"e9397625-0307-4a8f-be0f-e668f73f5936"]
-}, Open  ]]
+}, Closed]]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -4493,7 +4493,7 @@ Cell[3161, 101, 216, 4, 51, "Subsubsection",ExpressionUUID->"b1cb1112-ba98-4b77-
 Cell[3380, 107, 362, 9, 68, "Input",ExpressionUUID->"41694261-305f-4bf1-9963-92d542f4b12d",
  InitializationCell->True],
 Cell[3745, 118, 275, 5, 76, "Code",ExpressionUUID->"e9397625-0307-4a8f-be0f-e668f73f5936"]
-}, Open  ]]
+}, Closed]]
 }, Open  ]],
 Cell[CellGroupData[{
 Cell[4069, 129, 155, 3, 79, "Subsection",ExpressionUUID->"1b0c6dcb-90b4-45ed-98e8-1ee78dce367c"],

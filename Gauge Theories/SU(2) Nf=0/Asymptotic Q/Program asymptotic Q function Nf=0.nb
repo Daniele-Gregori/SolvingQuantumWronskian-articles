@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[    121538,       3555]
-NotebookOptionsPosition[    113358,       3401]
-NotebookOutlinePosition[    113748,       3417]
-CellTagsIndexPosition[    113705,       3414]
+NotebookDataLength[    121807,       3561]
+NotebookOptionsPosition[    113529,       3406]
+NotebookOutlinePosition[    113919,       3422]
+CellTagsIndexPosition[    113876,       3419]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -3396,7 +3396,12 @@ Cell[BoxData[
 }, Open  ]]
 }, Closed]]
 }, Open  ]]
-}, Open  ]]
+}, Open  ]],
+
+Cell["Match with NS functions", "Section",
+ CellChangeTimes->{{3.972486086917054*^9, 
+  3.972486101949538*^9}},ExpressionUUID->"8b142a10-224e-439c-a91b-\
+16423bd165e0"]
 }, Open  ]]
 },
 WindowSize->{808, 807},
@@ -3555,7 +3560,8 @@ Cell[96287, 2901, 17007, 493, 162, "Output",ExpressionUUID->"13615b16-57d2-49bd-
 }, Open  ]]
 }, Closed]]
 }, Open  ]]
-}, Open  ]]
+}, Open  ]],
+Cell[113345, 3400, 168, 3, 66, "Section",ExpressionUUID->"8b142a10-224e-439c-a91b-16423bd165e0"]
 }, Open  ]]
 }
 ]

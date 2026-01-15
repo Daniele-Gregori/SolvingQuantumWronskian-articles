@@ -1,46 +1,54 @@
 (* ::Package:: *)
 
+(* ::Title:: *)
+(*Nekrasov Functions*)
+
+
+(* ::Author:: *)
+(*Daniele Gregori, with open code by Yuji Tachikawa*)
+
+
 (* ::Section:: *)
 (*0. Package Header*)
 
 
-(*problem:
-\[Gamma] and Pi[n_,a_] is now derived from 1/2 F , but the rest is still with F *)
-(*in our papers we use 1/2 F but it is not what emerges from Nekrasov*)
-
-
-(* ::Subsection:: *)
+(* ::Subsection::Closed:: *)
 (*Begin Package*)
 
 
 BeginPackage["Nekrasov`"];
 
 
-\[ScriptCapitalF]tUS0eff;
+NekrasovF0;
+NekrasovF2;
+NekrasovF3;
+NekrasovF4;
 
 
-\[ScriptCapitalF]tUS22eff;
+Matone0;
+Matone2;
+Matone3;
 
 
-matone0;
-
-
-matone22;
-
-
-\[CapitalPi]B0;
-
-
-\[CapitalPi]B22;
+NekrasovAD0;
+NekrasovAD2;
+NekrasovAD3;
 
 
 a;
 u;
+Subscript[\[CapitalLambda], 0];
+Subscript[\[CapitalLambda], 1];
+Subscript[\[CapitalLambda], 2];
+Subscript[\[CapitalLambda], 3];
+q;
 \[HBar];
-\[CapitalLambda];
+Subscript[\[Epsilon], 1];
+Subscript[\[Epsilon], 2];
 m1;
 m2;
-m;
+m3;
+m4;
 
 
 (* ::Subsection::Closed:: *)
@@ -50,189 +58,248 @@ m;
 Begin["Private`"];
 
 
-(* ::Subsection::Closed:: *)
-(*Auxiliary Loading*)
-
-
-<<Combinatorica`
-
-
 (* ::Section:: *)
-(*1. General Young diagrams*)
+(*1. NekrasovF definition*)
 
 
 (* ::Subsection::Closed:: *)
-(*Generalities*)
+(*Young diagrams (Tachikawa)*)
+
+
+(* ::Subsubsection:: *)
+(*dual (or transposed) partition*)
 
 
 (* ::Input::Initialization:: *)
-DualPartition[l_]:=Module[{i},Table[Length[Select[l,(#>=i)&]],{i,1,l[[1]]}]]
+DualPartition[l_]:=Table[Length[Select[l,(#>=i)&]],{i,1,l[[1]]}]
 DualPartition[{}]={};
+
+
+(* ::Subsubsection:: *)
+(*arm and leg lengths*)
 
 
 (* ::Input::Initialization:: *)
 get[Y_,i_]:=If[i>Length[Y],0,Y[[i]]]
 arm[Y_,{i_,j_}]:=get[Y,i]-j
 leg[Y_,{i_,j_}]:=get[DualPartition[Y],j]-i
+e[a_,Y1_,Y2_,s_]:=a-Subscript[\[Epsilon], 1]  leg[Y2,s] + Subscript[\[Epsilon], 2] (arm[Y1,s]+1)
 
 
 (* ::Input::Initialization:: *)
-boxes[Y_]:=Join@@Table[{i,j},{i,1,Length[Y]},{j,1,Y[[i]]}]
+boxes[Y_]:=Join@@Table[Table[{i,j},{j,1,Y[[i]]}],{i,1,Length[Y]}]
+
+
+(* ::Subsubsection:: *)
+(*Pairs*)
 
 
 (* ::Input::Initialization:: *)
-e[a_,Y1_,Y2_,s_]:=a-\[Epsilon]1 leg[Y2,s]+\[Epsilon]2(arm[Y1,s]+1)
+ClearAll[youngPairs]
+youngPairs[k_]:=youngPairs[k]=Join@@ Identity[Join@@ Table[Outer[List,IntegerPartitions[i],IntegerPartitions[k-i],1],{i,0,k}]]
 
-youngPairs[k_]:=youngPairs[k]=Join@@Module[{i},Join@@Table[Outer[List,Partitions[i],Partitions[k-i],1],{i,0,k}]]
+
+(* ::Subsubsection:: *)
+(*Tuples*)
+
+
+(* ::Input::Initialization:: *)
+YoungTuples[1,tot_]:={#}& /@IntegerPartitions[tot]
+YoungTuples[n_,tot_]:= YoungTuples[n,tot]=Flatten[Table[Flatten[ Outer[Prepend[#2,#1]&,IntegerPartitions[r],YoungTuples[n-1,tot-r],1,1],1],{r,0,tot}],1]
 
 
 (* ::Subsection::Closed:: *)
-(*Conventions 0*)
+(*Particles SU(2)*)
+
+
+(* ::Subsubsection:: *)
+(*Gauge (Tachikawa)*)
+
+
+(* ::Text:: *)
+(*Contribution of a W-boson*)
 
 
 (* ::Input::Initialization:: *)
-fromWa[a_,bb_,Y1_,Y2_]:=(Times@@(e[a-bb,Y1,Y2,#]&/@boxes[Y1]))(Times@@((\[Epsilon]1+\[Epsilon]2-e[-a+bb,Y2,Y1,#])&/@boxes[Y2]))
+fromWa[a_,bb_,Y1_,Y2_]:=(Times @@ ( (e[a-bb,Y1,Y2,#](Subscript[\[Epsilon], 1]+Subscript[\[Epsilon], 2]-e[a-bb,Y1,Y2,#]))&/@ boxes[Y1]))
 
+
+(* ::Text:: *)
+(*Contribution of a U(2) vector multiplet*)
+
+
+(* ::Input::Initialization:: *)
 fromSU2V[a_,Y1_,Y2_]:=1/(fromWa[a,a,Y1,Y1]fromWa[a,-a,Y1,Y2]fromWa[-a,a,Y2,Y1]fromWa[-a,-a,Y2,Y2])
 
 
-(* ::Input::Initialization:: *)
-eigen[a_,Y_]:=(a+\[Epsilon]1(#[[1]]-1)+\[Epsilon]2(#[[2]]-1))&/@boxes[Y]
-eigen[a_,Y1_,Y2_]:=eigen[a,Y1]~Join~eigen[-a,Y2]
+(* ::Subsubsection:: *)
+(*Matter*)
 
-fund[a_,Y1_,Y2_,m_]:=(Times@@((#-m+\[Epsilon]1+\[Epsilon]2)&/@eigen[a,Y1,Y2]))
-antifund[a_,Y1_,Y2_,m_]:=(Times@@((#+m)&/@eigen[a,Y1,Y2]))
+
+\[Phi][a_,Y_]:=(a+Subscript[\[Epsilon], 1](#[[1]]-1)+Subscript[\[Epsilon], 2](#[[2]]-1))&/@boxes[Y]
+
+
+(* ::Input::Initialization:: *)
+fund[a_,Y1_,Y2_,m_]:=
+Times[
+Times@@Map[#-m+Subscript[\[Epsilon], 1]+Subscript[\[Epsilon], 2]&,\[Phi][a,Y1]],
+Times@@Map[#-m+Subscript[\[Epsilon], 1]+Subscript[\[Epsilon], 2]&,\[Phi][-a,Y2]]]
+antifund[a_,Y1_,Y2_,m_]:=fund[a,Y1,Y2,Subscript[\[Epsilon], 1]+Subscript[\[Epsilon], 2]-m]
 
 
 (* ::Subsection::Closed:: *)
-(*Conventions AGH*)
+(*Partitions functions*)
 
 
 (* ::Input::Initialization:: *)
-fromWaAGH[a_,bb_,Y1_,Y2_]:=(Times@@(e[a-bb,Y1,Y2,#]&/@boxes[Y1]))(Times@@((e[a-bb,Y2,Y1,#])&/@boxes[Y2]))
-
-fromSU2VAGH[a_,Y1_,Y2_]:=1/(fromWaAGH[a,a,Y1,Y1]fromWaAGH[a,-a,Y1,Y2]fromWaAGH[-a,a,Y2,Y1]fromWaAGH[-a,-a,Y2,Y2])
+assocCoupling=AssociationThread[{"SU2"},{AssociationThread[{0,1,2,3,4,All},{Subscript[\[CapitalLambda], 0]^4,Subscript[\[CapitalLambda], 1]^3,Subscript[\[CapitalLambda], 2]^2,Subscript[\[CapitalLambda], 3],q,q}]}];
 
 
 (* ::Input::Initialization:: *)
-eigenAGH[a_,Y_,m_]:=(a+m+\[Epsilon]1(#[[1]]-1/2)+\[Epsilon]2(#[[2]]-1/2))&/@boxes[Y]
-eigenAGH[a_,Y1_,Y2_,m_]:=Times@@Join[eigenAGH[a,Y1,m],eigenAGH[-a,Y2,m]]
+ascFactors=AssociationThread[{"SU2"},{Association@Join[#->(2^(-1/(2-#/2)))^(4-#)&/@Range[0,3],{4->1/4,All->1/4}]}];
+
+
+(* ::Input::Initialization:: *)
+ClearAll[nekrasovSU2Nf]
+nekrasovSU2Nf[n_,k_]:=
+nekrasovSU2Nf[n,k]=
+Plus@@Map[fromSU2V[a ,#[[1]],#[[2]]]Times@@Take[Unevaluated@{antifund[a,#[[1]],#[[2]],m1],antifund[a,#[[1]],#[[2]],m2] ,fund[a,#[[1]],#[[2]],m3],fund[a,#[[1]],#[[2]],m4]},k]&,youngPairs[n]]
+
+
+(* ::Input::Initialization:: *)
+(*to understand better*)
+(*seems to be due to definition A.9 of AGH*)
+(*maybe it is also related to the U(1) factor*)
+convAGH={m1->m1+Subscript[\[Epsilon], 1]/2+Subscript[\[Epsilon], 2]/2,m2->m2+Subscript[\[Epsilon], 1]/2+Subscript[\[Epsilon], 2]/2,m3->-m3+Subscript[\[Epsilon], 1]/2+Subscript[\[Epsilon], 2]/2,m4->-m4+Subscript[\[Epsilon], 1]/2+Subscript[\[Epsilon], 2]/2};
+
+
+(* ::Subsection::Closed:: *)
+(*Main definition*)
+
+
+(* ::Input::Initialization:: *)
+ClearAll[NekrasovF,NekrasovZ]
+Options[NekrasovF]={"GaugeGroup"->"SU2","MatterFlavors"->All,"InstantonOrder"->Automatic,"OmegaBackground"->"Full","SimplifyResult"->Automatic,"Compile"->Automatic,"Conventions"->"AGH","U1Factor"->False};
+
+NekrasovZ[opt:OptionsPattern[NekrasovF]]:=
+Block[{n,Nf,simpopt,c,core,back},
+n=OptionValue["InstantonOrder"]/.Automatic->1;
+Nf=OptionValue["MatterFlavors"];
+simpopt=OptionValue["SimplifyResult"]/.Automatic->True;
+c=assocCoupling[OptionValue["GaugeGroup"]][Nf];
+core=Which[OptionValue["GaugeGroup"]=="SU2",
+			Plus@@
+			Table[nekrasovSU2Nf[i,Nf]c^i,{i,1,n}]
+				/.convAGH];
+core=If[OptionValue["Conventions"]==="AGH",core/.convAGH,core];
+If[simpopt,Collect[core,c,Simplify],core]]
+
+
+NekrasovF[opt:OptionsPattern[NekrasovF]]:=
+Block[{n,Zn,Z,Nf,gau,c,r,back,coeff1,u1,simpopt,simp},
+n=OptionValue["InstantonOrder"]/.Automatic->1;
+Nf=OptionValue["MatterFlavors"];
+gau=OptionValue["GaugeGroup"];
+c=assocCoupling[gau][Nf]
+	/.Subscript[x_,y_]:>Symbol[ToString[x]<>ToString[y]]
+		/.Power[x_,y_]:>Symbol[ToString[x]<>ToString[y]];
+r=ascFactors[gau][Nf];
+Zn[k_]:=Which[gau==="SU2",nekrasovSU2Nf[k,Nf]];
+Zn[0]=1;
+Z=Normal@Series[
+	-Log[Sum[Zn[k](r c)^k,{k,0,n}]],
+		{c,0,n}];
+Z=If[OptionValue["Conventions"]==="AGH",Z/.convAGH,Z];
+back=Switch[OptionValue["OmegaBackground"],
+				"Full",
+				Subscript[\[Epsilon], 1] Subscript[\[Epsilon], 2]Z,
+				"NS",
+				Limit[Subscript[\[Epsilon], 1] Subscript[\[Epsilon], 2]Z,Subscript[\[Epsilon], 2]->0]];
+coeff1=Coefficient[back,c,1];
+u1=If[!OptionValue["U1Factor"]&&OptionValue["Conventions"]==="AGH",
+		back-coeff1 c+Plus@@Discard[List@@Apart[coeff1,a],FreeQ[#,a]&]c,
+		back];
+simpopt=OptionValue["SimplifyResult"]/.Automatic->True;
+simp=If[simpopt,Collect[u1,c,Simplify],u1];
+simp/.c->assocCoupling[OptionValue["GaugeGroup"]][Nf]]
 
 
 (* ::Section:: *)
-(*2. Flavours implementations*)
+(*2. Derived definitions*)
 
 
 (* ::Subsection::Closed:: *)
-(*Nf=4*)
+(*NekrasovFk*)
 
 
-(* ::Input::Initialization:: *)
-nekrasov[n_]:=nekrasov[n]=Module[{A=youngPairs[n]},Sum[Module[{A1=A[[s]][[1]],A2=A[[s]][[2]]},fromSU2V[a ,A1,A2]antifund[a,A1,A2,m1]antifund[a,A1,A2,m2] fund[a,A1,A2,m3]fund[a,A1,A2,m4]],{s,1,Length[A]}]]
+NekrasovF0[n_]:=NekrasovF0[n]=
+	NekrasovF["InstantonOrder"->n,"MatterFlavors"->0,"OmegaBackground"->"NS"](*/.Subscript[\[Epsilon], 1]-> I \[HBar]/.a->I a*)
 
 
-(* ::Input::Initialization:: *)
-nekrasovAGH[n_]:=nekrasovAGH[n]=Module[{A=youngPairs[n]},Sum[Module[{A1=A[[s]][[1]],A2=A[[s]][[2]]},fromSU2V[a ,A1,A2]eigenAGH[a,A1,A2,m1]eigenAGH[a,A1,A2,m2]eigenAGH[a,A1,A2,m3]eigenAGH[a,A1,A2,m4]],{s,1,Length[A]}]]
+NekrasovF2[n_]:=NekrasovF2[n]=
+	NekrasovF["InstantonOrder"->n,"MatterFlavors"->2,"OmegaBackground"->"NS"](*/.Subscript[\[Epsilon], 1]-> I \[HBar]/.a->I a*)
 
 
-(* ::Subsection:: *)
-(*Nf=2*)
+NekrasovF3[n_]:=NekrasovF3[n]=
+	NekrasovF["InstantonOrder"->n,"MatterFlavors"->3,"OmegaBackground"->"NS"](*/.Subscript[\[Epsilon], 1]-> I \[HBar]/.a->I a*)
 
 
-(* ::Input::Initialization:: *)
-nekrasov2[n_]:=nekrasov2[n]=Module[{A=youngPairs[n]},Sum[Module[{A1=A[[s]][[1]],A2=A[[s]][[2]]},fromSU2V[a ,A1,A2]eigenAGH[a,A1,A2, m1]eigenAGH[a,A1,A2, m2]],{s,1,Length[A]}]]
-
-
-(* ::Input::Initialization:: *)
-nekrasovAGH2[n_]:=Module[{A=youngPairs[n]},Sum[Module[{A1=A[[s]][[1]],A2=A[[s]][[2]]},fromSU2VAGH[a ,A1,A2]eigenAGH[a,A1,A2,m1]eigenAGH[a,A1,A2,m2]eigenAGH[a,A1,A2,m3]eigenAGH[a,A1,A2,m4]],{s,1,Length[A]}]]
-
-
-(* ::Input::Initialization:: *)
-\[Gamma]2=Times[#,2]&/@(2 a Log[(2  \[HBar])/Subscript[\[CapitalLambda], 2]]+ \[HBar] Log[Gamma[1+(2 a)/\[HBar]]/Gamma[1-(2 a)/\[HBar]]]+ 1/2\[HBar] Log[Gamma[1/2+(m1- a)/\[HBar]]/Gamma[1/2+(m1+a)/\[HBar]]] +1/2\[HBar] Log[Gamma[1/2+(m2- a)/\[HBar]]/Gamma[1/2+(m2+a)/\[HBar]]]);
-
-
-(* ::Input::Initialization:: *)
-ruleconv22={\[Epsilon]1-> \[HBar],Subscript[\[CapitalLambda], HoldForm@2]-> Subscript[\[CapitalLambda], HoldForm@2]/2,m1->m1,m2->m2};
-
-\[ScriptCapitalF]2tn22[N_]:=\[ScriptCapitalF]2tn22[N]=(Limit[\[Epsilon]1 \[Epsilon]2 (Series[-Log[1+Sum[Z[n] \[CapitalLambda]^(n),{n,1,N+1}]],{\[CapitalLambda],0,N}]//Normal)/.{\[CapitalLambda]->Subscript[\[CapitalLambda], HoldForm@2]^2,Z->nekrasov2},\[Epsilon]2->0]//Collect[#,Subscript[\[CapitalLambda], HoldForm@2]^2,Simplify]&)/.ruleconv22//Times[#,-1]&
-
-\[ScriptCapitalF]tUS22[n_]:=Collect[Expand@FullSimplify[\[ScriptCapitalF]2tn22[n]/.{\[Epsilon]1->\[HBar],a->a,\!\(\*SubscriptBox[\(\[CapitalLambda]\), 
-TagBox["2",
-HoldForm]]\)->\!\(\*SubscriptBox[\(\[CapitalLambda]\), 
-TagBox["2",
-HoldForm]]\)}],\!\(\*SubscriptBox[\(\[CapitalLambda]\), 
-TagBox["2",
-HoldForm]]\),Simplify]
-
-\[ScriptCapitalF]tUS22eff[n_]:=If[Head@#===Plus&&Length@#>=2,Apply[Plus,Flatten@{Simplify[\!\(\*
-SubsuperscriptBox["\[CapitalLambda]", 
-TagBox["2",
-HoldForm], "2"]/8\)+First@#],Rest@#}],-((m1 m2 \!\(\*SubsuperscriptBox[\(\[CapitalLambda]\), 
-TagBox["2",
-HoldForm], \(2\)]\))/(8 a^2-2 \[HBar]^2))]&@EchoFunction[Magnify[#,0.7]&]@\[ScriptCapitalF]tUS22[n]//QuietEcho
-
-matone22[N_]:=u==a^2- 1/2 Subscript[\[CapitalLambda], HoldForm@2]D[\[ScriptCapitalF]tUS22eff[N],Subscript[\[CapitalLambda], HoldForm@2]]
-
-ruleUS22=Apply[Rule,matone22[2]/.{\[HBar]->0}/.\!\(\*SubscriptBox[\(\[CapitalLambda]\), 
-TagBox["2",
-HoldForm]]\)->\[CapitalLambda]//Expand//Collect[#,\[CapitalLambda]^2,FullSimplify]&];
-
-ruleU2S2rv=Part[Echo@AsymptoticSolve[Equal@@ruleUS22,a,{\[CapitalLambda],0,4}],-1]//QuietEcho;
-
-a22[n_]:=a22[n]=AsymptoticSolve[matone22[n],a,{Subscript[\[CapitalLambda], HoldForm@2],0,2n}][[2,1,2]]
-
-\[CapitalPi]B22[n_]:=\[CapitalPi]B22[n]= ReplaceAll[Collect[D[\[ScriptCapitalF]tUS22eff[n],a],Subscript[\[CapitalLambda], HoldForm@2],Simplify]+\[Gamma]2,a->Evaluate@a22[n]]
-
-\[CapitalPi]B22[n_/;0<=n<=3,a_]:=\[Gamma]2+Take[(*+1/2*)((4 a m1 m2 \!\(\*SubsuperscriptBox[\(\[CapitalLambda]\), 
-TagBox["2",
-HoldForm], \(2\)]\))/(-4 a^2+\[HBar]^2)^2)+(*1/2*)(a (256 a^8+60 m2^2 \[HBar]^6+\[HBar]^8-256 a^6 (6 m1^2+6 m2^2+\[HBar]^2)+m1^2 (-1776 m2^2 \[HBar]^4+60 \[HBar]^6)+96 a^4 (18 m2^2 \[HBar]^2+\[HBar]^4+2 m1^2 (20 m2^2+9 \[HBar]^2))-16 a^2 (36 m2^2 \[HBar]^4+\[HBar]^6+12 m1^2 (4 m2^2 \[HBar]^2+3 \[HBar]^4))) \!\(\*SubsuperscriptBox[\(\[CapitalLambda]\), 
-TagBox["2",
-HoldForm], \(4\)]\))/(512 (a^2-\[HBar]^2)^2 (-4 a^2+\[HBar]^2)^4)+(*1/2*)(m1 m2 (61440 a^13-8192 a^11 (14 m1^2+14 m2^2+25 \[HBar]^2)+a \[HBar]^8 (-9236 m2^2 \[HBar]^2+245 \[HBar]^4+4 m1^2 (30740 m2^2-2309 \[HBar]^2))+256 a^9 (1004 m2^2 \[HBar]^2+895 \[HBar]^4+4 m1^2 (180 m2^2+251 \[HBar]^2))+128 a^3 \[HBar]^6 (629 m2^2 \[HBar]^2-35 \[HBar]^4+m1^2 (3340 m2^2+629 \[HBar]^2))-512 a^7 (2 m2^2 \[HBar]^4+235 \[HBar]^6+2 m1^2 (120 m2^2 \[HBar]^2+\[HBar]^4))-16 a^5 (11768 m2^2 \[HBar]^6-2045 \[HBar]^8+8 m1^2 (5540 m2^2 \[HBar]^4+1471 \[HBar]^6))) \!\(\*SubsuperscriptBox[\(\[CapitalLambda]\), 
-TagBox["2",
-HoldForm], \(6\)]\))/(384 (-4 a^2+\[HBar]^2)^6 (4 a^4-13 a^2 \[HBar]^2+9 \[HBar]^4)^2),n]
-
+NekrasovF4[n_]:=NekrasovF4[n]=
+	NekrasovF["InstantonOrder"->n,"MatterFlavors"->4,"OmegaBackground"->"NS","U1Factor"->True](*/.Subscript[\[Epsilon], 1]-> I \[HBar]/.a->I a*)
 
 
 (* ::Subsection:: *)
-(*Nf=0*)
+(*NekrasovADk*)
 
 
-(* ::Input::Initialization:: *)
-nekrasov0[n_]:=nekrasov0[n]=Module[{A=youngPairs[n]},Sum[Module[{A1=A[[s]][[1]],A2=A[[s]][[2]]},fromSU2V[a ,A1,A2]],{s,1,Length[A]}]]
+(* ::Subsubsection::Closed:: *)
+(*Perturbative part*)
 
 
-(* ::Input::Initialization:: *)
-\[ScriptCapitalF]0tn[N_]:=\[ScriptCapitalF]0tn[N]=(Limit[\[Epsilon]1 \[Epsilon]2 (Series[-Log[1+Sum[Z[n] \[CapitalLambda]^(n),{n,1,N+1}]],{\[CapitalLambda],0,N}]//Normal)/.{\[CapitalLambda]->Subscript[\[CapitalLambda], HoldForm@0]^4,Z->nekrasov0},\[Epsilon]2->0]//Collect[#,Subscript[\[CapitalLambda], HoldForm@0]^2,Simplify]&)/.ruleconv0//Times[#,-1]&
-\[ScriptCapitalF]tUS0[n_]:=Collect[Expand@FullSimplify[\[ScriptCapitalF]0tn[n]/.{\[Epsilon]1->\[HBar],a->a}],Subscript[\[CapitalLambda], HoldForm@0],Simplify]
-\[ScriptCapitalF]tUS0eff[n_]:=\[ScriptCapitalF]tUS0[n]//QuietEcho
+\[Gamma]0=Times[#,-2]&/@
+	(4 a Log[(Sqrt[2]\[HBar])/Subscript[\[CapitalLambda], 0]]+ \[HBar] Log[Gamma[1+(2 a)/\[HBar]]/Gamma[1-(2 a)/\[HBar]]]);
 
 
-(* ::Input::Initialization:: *)
-ruleconv0={\[Epsilon]1-> \[HBar],Subscript[\[CapitalLambda], HoldForm@0]-> Subscript[\[CapitalLambda], HoldForm@0]/Sqrt@2}
+\[Gamma]2=Times[#,-2]&/@
+		(2 a Log[(2  \[HBar])/Subscript[\[CapitalLambda], 2]]+ \[HBar] Log[Gamma[1+(2 a)/\[HBar]]/Gamma[1-(2 a)/\[HBar]]]
+		+ 1/2\[HBar] Log[Gamma[1/2+(m1- a)/\[HBar]]/Gamma[1/2+(m1+a)/\[HBar]]] +1/2\[HBar] Log[Gamma[1/2+(m2- a)/\[HBar]]/Gamma[1/2+(m2+a)/\[HBar]]]);
 
 
-
-(* ::Input::Initialization:: *)
-matone0[N_]:=u==a^2- 1/4 Subscript[\[CapitalLambda], HoldForm@0]D[\[ScriptCapitalF]tUS0eff[N],Subscript[\[CapitalLambda], HoldForm@0]]//Collect[#,Subscript[\[CapitalLambda], HoldForm@0],Simplify]&
-
-ruleUS0=RuleDelayed@@(matone0[2]/.\[HBar]:>0);
+\[Gamma]3=Times[#,-2]&/@
+		(1 a Log[(4  \[HBar])/Subscript[\[CapitalLambda], 3]]+\[HBar] Log[Gamma[1+(2 a)/\[HBar]]/Gamma[1-(2 a)/\[HBar]]]
+		+1/2 \[HBar] Log[Gamma[1/2+(m1- a)/\[HBar]]/Gamma[1/2+(m1+a)/\[HBar]]] +1/2\[HBar] Log[Gamma[1/2+(m2- a)/\[HBar]]/Gamma[1/2+(m2+a)/\[HBar]]] +1/2\[HBar] Log[Gamma[1/2+(m3- a)/\[HBar]]/Gamma[1/2+(m3+a)/\[HBar]]]);
 
 
-(* ::Input::Initialization:: *)
-\[Gamma]0=Times[#,2]&/@(4 a Log[(Sqrt[2]\[HBar])/Subscript[\[CapitalLambda], HoldForm@0]]+ \[HBar] Log[Gamma[1+(2 a)/\[HBar]]/Gamma[1-(2 a)/\[HBar]]]);
+(* ::Subsubsection::Closed:: *)
+(*Full AD*)
 
 
-(*factor 2 normalization*)
+NekrasovAD0[n_]:=NekrasovAD0[n]= 
+	Collect[D[NekrasovF0[n],a],Subscript[\[CapitalLambda], 0],Simplify]+\[Gamma]0
 
 
-(* ::Input::Initialization:: *)
-\[CapitalPi]B0[n_/;0<=n<=3,a_]:=\[Gamma]0+Take[(*1/2*)(4 a \!\(\*SubsuperscriptBox[\(\[CapitalLambda]\), 
-TagBox["0",
-HoldForm], \(4\)]\))/(-4 a^2+\[HBar]^2)^2+(*1/2*)(3 a (80 a^4-16 a^2 \[HBar]^2-37 \[HBar]^4) \!\(\*SubsuperscriptBox[\(\[CapitalLambda]\), 
-TagBox["0",
-HoldForm], \(8\)]\))/(32 (a^2-\[HBar]^2)^2 (-4 a^2+\[HBar]^2)^4)+(*1/2*)(5 (2304 a^9-1536 a^7 \[HBar]^2-8864 a^5 \[HBar]^4+5344 a^3 \[HBar]^6+1537 a \[HBar]^8) \!\(\*SubsuperscriptBox[\(\[CapitalLambda]\), 
-TagBox["0",
-HoldForm], \(12\)]\))/(24 (-4 a^2+\[HBar]^2)^6 (4 a^4-13 a^2 \[HBar]^2+9 \[HBar]^4)^2),n]
+NekrasovAD2[n_]:=NekrasovAD2[n]= 
+	Collect[D[NekrasovF2[n],a],Subscript[\[CapitalLambda], 2],Simplify]+\[Gamma]2
+
+
+NekrasovAD3[n_]:=NekrasovAD3[n]= 
+	Collect[D[NekrasovF3[n],a],Subscript[\[CapitalLambda], 3],Simplify]+\[Gamma]3
+
+
+(* ::Subsection::Closed:: *)
+(*Matonek*)
+
+
+Matone0[n_]:=Matone0[n]=
+	u==a^2+1/4 Subscript[\[CapitalLambda], 0]D[NekrasovF0[n],Subscript[\[CapitalLambda], 0]]
+
+
+Matone2[n_]:=Matone2[n]=
+	u==a^2+ 1/2 Subscript[\[CapitalLambda], 2]D[NekrasovF2[n],Subscript[\[CapitalLambda], 2]]
+
+
+Matone3[n_]:=Matone3[n]=
+	u==a^2+  Subscript[\[CapitalLambda], 3]D[NekrasovF3[n],Subscript[\[CapitalLambda], 3]]
 
 
 (* ::Section:: *)

@@ -1,7 +1,48 @@
 #!/usr/bin/env wolframscript
 (* ::Package:: *)
 
+(* ::Title:: *)
+(*Script Q from TBA for Generalized Perturbed Hairpin IM*)
+
+
+(* ::Author:: *)
+(*Daniele Gregori*)
+
+
+(* ::Section:: *)
+(*Setup*)
+
+
+(* ::Subsection:: *)
+(*Resources*)
+
+
 ThermodynamicBetheAnsatzSolve=ResourceFunction["ThermodynamicBetheAnsatzSolve"];
+
+
+(* ::Subsection::Closed:: *)
+(*Mail*)
+
+
+(*
+fill with your own
+SetOptions[SendMail,
+MailSettings-><|
+    "Server"->"",
+    "PortNumber"->,
+    "EncryptionProtocol"->"",
+    "Username"->"",
+    "Password"->"",
+    "FromAddress"->""
+|>];*)
+
+
+(* ::Section:: *)
+(*Definitions*)
+
+
+(* ::Subsection:: *)
+(*Main*)
 
 
 (* ::Subsubsection:: *)
@@ -42,17 +83,8 @@ sol=solGHP[P,q1,q2(*,opts*)];
 -I Exp[y-\[Theta]]Log[(1+Exp[-y3[y]])/(1+Exp[-y2[y]])])/.sol[[1]],{y,-K,K}]]//Chop
 
 
-(*
-fill with your own
-SetOptions[SendMail,
-MailSettings-><|
-    "Server"->"",
-    "PortNumber"->,
-    "EncryptionProtocol"->"",
-    "Username"->"",
-    "Password"->"",
-    "FromAddress"->""
-|>];*)
+(* ::Subsection:: *)
+(*Execution*)
 
 
 core[P_,q1_,q2_]:=Block[{res,time,grid},
@@ -82,6 +114,10 @@ grid=ToString@Grid[{{"{\[Theta],P,q1,q2}:",N@{\[Theta],P,q1,q2}},{"result",res},
 
 
 table:=Table[core[Sequence@@Pq1q2],{Pq1q2,{{1.2,0.25,0.25},{1.2,1/4,1/8},{1.8,1/4,1/4},{1.8,1/3,1/6},{2.4,1/5,1/5},{2.4,1/5,1/4},{3.,1/4,1/4},{3.,1/4,1/8}}}]
+
+
+(* ::Section:: *)
+(*Run*)
 
 
 If[MemberQ[$ScriptCommandLine,"interactive"],interactive,table]
